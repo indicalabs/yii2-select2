@@ -13,9 +13,15 @@ namespace indicalabs\select2;
  */
 class Select2Asset extends \yii\web\AssetBundle
 {
+	/**
+	 * @var string Plugin language
+	 */
+	public $language;
+	
 	public $sourcePath = '@bower/select2/dist';
 	public $js = [
-			'js/select2.full.min.js',
+ 			'js/select2.full.min.js',
+//			'js/select2.min.js',
 	];
 	
 	public $css = [
@@ -24,4 +30,15 @@ class Select2Asset extends \yii\web\AssetBundle
 	public $depends = [
 			'yii\web\JqueryAsset',
 	];
+	
+	/**
+	 * @inheritdoc
+	 */
+	public function registerAssetFiles($view)
+	{
+		if ($this->language !== null) {
+			$this->js[] = 'select2_locale_' . $this->language . '.js';
+		}
+		parent::registerAssetFiles($view);
+	}
 }

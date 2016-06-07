@@ -4,7 +4,8 @@ namespace indicalabs\select2;
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use conquer\helpers\Json;
+use yii\helpers\Json;
+use yii\web\JsExpression;
 
 /**
  * Wrapper Widget to use jQuery Select2 in Yii2 application.
@@ -81,7 +82,9 @@ use conquer\helpers\Json;
 class Select2Widget extends \yii\widgets\InputWidget
 {
 
-
+	/** Name of inline JavaScript package that is registered by the widget */
+	const INLINE_JS_KEY = 'indicalabs/select2/';
+	
 	/**
 	 * Points to use Bootstrap theme
 	 * @var boolean
@@ -130,6 +133,24 @@ class Select2Widget extends \yii\widgets\InputWidget
 	 * @var array
 	 */
 	public $settings = [];
+	
+
+	/**
+	 * Events array. Array keys are the events name, and array values are the events callbacks.
+	 * Example:
+	 * ```php
+	 * [
+	 *     'select2-open' => 'function (e) { log("select2:open", e); }',
+	 *     'select2-close' => new JsExpression('function (e) { log("select2:close", e); }'),
+	 *     'select2-select' => [
+	 *         'function (e) { log("select2:select", e); }',
+	 *         'function (e) { console.log(e); }'
+	 *     ]
+	 * ]
+	 * ```
+	 * @var array Plugin events
+	 */
+	public $events = [];
 	
 	/**
 	 * @inheritdoc
@@ -182,12 +203,12 @@ class Select2Widget extends \yii\widgets\InputWidget
 	 */
 	public function run()
 	{
+		$this->registerAssets();
 		if ($this->hasModel()) {
 			echo Html::activeDropDownList($this->model, $this->attribute, $this->items, $this->options);
 		} else {
 			echo Html::dropDownList($this->name, $this->value, $this->items, $this->options);
 		}
-		$this->registerAssets();
 	}
 	
 	/**
@@ -215,9 +236,43 @@ class Select2Widget extends \yii\widgets\InputWidget
 			Select2BootstrapAsset::register($view);
 		}
 		$settings = Json::encode($this->settings);
-		$view->registerJs("jQuery('#{$this->options['id']}').select2($settings);");
+		$view->registerJs("jQuery('#{$this->options['id']}').select2($settings);", $view::POS_READY, self::INLINE_JS_KEY . $this->options['id']);
+		// Register events
+		$this->registerEvents();
 	}
 
+
+	/**
+	 * Register plugin' events.
+	 */
+	protected function registerEvents()
+	{
+		$view = $this->getView();
+		$selector = '#' . $this->options['id'];
+		if (!empty($this->events)) {
+			$js = [];
+			foreach ($this->events as $event => $callback) {
+				if (is_array($callback)) {
+					foreach ($callback as $function) {
+						if (!$function instanceof JsExpression) {
+							$function = new JsExpression($function);
+						}
+						$js[] = "jQuery('$selector').on('$event', $function);";
+					}
+				} else {
+					if (!$callback instanceof JsExpression) {
+						$callback = new JsExpression($callback);
+					}
+					$js[] = "jQuery('$selector').on('$event', $callback);";
+				}
+			}
+			if (!empty($js)) {
+				$js = implode("\n", $js);
+				$view->registerJs($js, $view::POS_READY, self::INLINE_JS_KEY . 'events/' . $this->options['id']);
+			}
+		}
+	}
+	
 	/**
 	 * Renders the AutoComplete widget.
 	 * @return string the rendering result.
