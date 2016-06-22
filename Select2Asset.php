@@ -20,8 +20,7 @@ class Select2Asset extends \yii\web\AssetBundle
 	
 	public $sourcePath = '@bower/select2/dist';
 	public $js = [
-			'js/select2.full.js',
-// 			'js/select2.full.min.js',
+ 			'js/select2.full.min.js',
 //			'js/select2.min.js',
 	];
 	
@@ -40,6 +39,25 @@ class Select2Asset extends \yii\web\AssetBundle
 		if ($this->language !== null) {
 			$this->js[] = 'select2_locale_' . $this->language . '.js';
 		}
+		
+		$view->registerJs(<<<JS
+			function formatResult(item) {
+				      if(!item.id) {
+				        // return `text` for optgroup
+				        return item.text;
+				      }
+				      // return item template
+				      return '<i>' + item.text + '</i>';
+				    };
+		
+		    function formatSelection(repo) {
+					//repo.selected =true;
+		      // return selection template
+		      //return '<b>' + item.text + '</b>';
+		        return repo.full_name || repo.text;
+    		};
+JS
+	,			\yii\web\View::POS_READY);
 		parent::registerAssetFiles($view);
 	}
 }
