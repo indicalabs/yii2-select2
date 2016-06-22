@@ -20,7 +20,8 @@ class Select2Asset extends \yii\web\AssetBundle
 	
 	public $sourcePath = '@bower/select2/dist';
 	public $js = [
- 			'js/select2.full.min.js',
+			'js/select2.full.js',
+// 			'js/select2.full.min.js',
 //			'js/select2.min.js',
 	];
 	
