@@ -15,7 +15,7 @@ namespace indicalabs\select2;
 // @ TODO This file is to load language options 
 class Select2RegionalAsset extends \yii\web\AssetBundle
 {
-	public $sourcePath = '@bower/select2/dist';
+	public $sourcePath = '@npm/select2/dist';
 
 	public $js = [
 		//'jquery.ui.datepicker-i18n.js',

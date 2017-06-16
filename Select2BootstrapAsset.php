@@ -14,8 +14,8 @@ namespace indicalabs\select2;
 class Select2BootstrapAsset extends \yii\web\AssetBundle
 {
     // The files are not web directory accessible, therefore we need
-    // to specify the sourcePath property. Notice the @bower alias used.
-    public $sourcePath = '@bower/select2-bootstrap-theme/dist';
+	// to specify the sourcePath property. Notice the @npm alias used.
+    public $sourcePath = '@npm/select2-bootstrap-theme/dist';
     
     public $css = [
         'select2-bootstrap.min.css',
