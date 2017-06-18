@@ -19,8 +19,8 @@
      	"php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.12",
         "npm-asset/select2": ">=4.0.3",
-    	"npm-asset/select2-bootstrap-theme": ">=0.1.0-beta.10",
-    	"npm-asset/vue-select": ">=2.2.0"
+    	"npm-asset/select2-bootstrap-theme": "~0.1.0-beta.10",
+    	"npm-asset/vue-select": "~2.2.0"
    	},
     "autoload": {
         "psr-4": { "indicalabs\\select2\\": "" }
